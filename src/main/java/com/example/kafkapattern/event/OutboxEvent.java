@@ -2,12 +2,14 @@ package com.example.kafkapattern.event;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OutboxEvent {
 
@@ -35,5 +37,12 @@ public class OutboxEvent {
         this.id = UUID.randomUUID().toString();
         this.status = OutboxEventStatus.INIT;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void changeStatus(OutboxEventStatus newStatus) {
+        this.status = newStatus;
+        if (newStatus == OutboxEventStatus.SUCCESS) {
+            this.sentAt = LocalDateTime.now();
+        }
     }
 }

@@ -19,6 +19,8 @@ public class AsyncConfig {
         executor.setMaxPoolSize(10);    // 최대 쓰레드 수
         executor.setQueueCapacity(100); // 작업 대기 큐 크기
         executor.setThreadNamePrefix("event-async-");
+        executor.setWaitForTasksToCompleteOnShutdown(true);  // 우아한 종료 안하면 트랜잭션 끝나고 리스너가 호출되지 않을 수 있음. 트랜잭션 이후에 이 인스턴스가 종료되는 경우...
+        executor.setAwaitTerminationSeconds(10);
         executor.initialize();
         return executor;
     }
