@@ -6,6 +6,7 @@ import com.example.kafkapattern.event.OutboxEventRepository;
 import com.example.kafkapattern.product.Product;
 import com.example.kafkapattern.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -26,7 +28,7 @@ public class OrderService {
     @Transactional
     public Long placeOrder(OrderRequest request) {
 
-        System.out.println("현재 쓰레드 이름 in OrderService: " + Thread.currentThread().getName());
+        log.info("현재 쓰레드 이름 in OrderService: " + Thread.currentThread().getName());
 
         // 데드락을 피하기 위한 sorting
         List<OrderItemRequest> sorted = request.items().stream()
@@ -60,7 +62,7 @@ public class OrderService {
 
         OutboxEvent outboxEvent = new OutboxEvent("ORDER", order.getId(), "ORDER_PLACED", objectSerializer.serialize(OrderPlacedDto.from(order)));
         outboxEventRepository.save(outboxEvent);
-        eventPublisher.publishEvent(outboxEvent);
+        eventPublisher.publishEvent(new OrderPlacedEvent(outboxEvent.getId(), outboxEvent.getAggregateId(), outboxEvent.getPayload()));
 
         return order.getId();
     }
