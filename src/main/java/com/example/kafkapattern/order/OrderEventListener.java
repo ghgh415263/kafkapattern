@@ -5,11 +5,15 @@ import com.example.kafkapattern.event.OutboxEventService;
 import com.example.kafkapattern.event.OutboxEventStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.nio.charset.StandardCharsets;
 
 import static com.example.kafkapattern.event.AsyncConfig.EVENT_ASYNC_TASK_EXECUTOR;
 
@@ -29,7 +33,16 @@ public class OrderEventListener {
         log.info("주문 완료 이벤트 받음: " + event.getAggregateId());
         log.info("현재 쓰레드 이름 in OrderEventListener: " + Thread.currentThread().getName());
 
-        kafkaTemplate.send("order-events", event.getAggregateId().toString(), event.getPayload())
+        ProducerRecord<String, Object> record = new ProducerRecord<>(
+                "order-events",
+                event.getAggregateId().toString(),
+                event.getPayload()
+        );
+
+        // 헤더 추가 (예: eventId)
+        record.headers().add(new RecordHeader("event-id", event.getId().toString().getBytes(StandardCharsets.UTF_8)));
+
+        kafkaTemplate.send(record)
                 .thenAccept(result -> {
                     log.info("Kafka 전송 성공 - offset: {}", result.getRecordMetadata().offset());
                     outboxEventService.updateStatus(event.getId(), OutboxEventStatus.SUCCESS);
