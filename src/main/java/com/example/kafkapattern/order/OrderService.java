@@ -24,6 +24,8 @@ public class OrderService {
     @Transactional
     public Long placeOrder(OrderRequest request) {
 
+        System.out.println("현재 쓰레드 이름 in OrderService: " + Thread.currentThread().getName());
+
         // 데드락을 피하기 위한 sorting
         List<OrderItemRequest> sorted = request.items().stream()
                 .sorted(Comparator.comparing(OrderItemRequest::productId))
