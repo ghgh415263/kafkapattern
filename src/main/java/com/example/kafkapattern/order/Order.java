@@ -22,12 +22,15 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
-    public Order(Long userId) {
+    public Order(Long userId, List<OrderItem> items) {
         this.userId = userId;
+        for (OrderItem item : items) {
+            addItem(item);
+        }
     }
 
     // 연관관계 편의 메서드
-    public void addItem(OrderItem item) {
+    private void addItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);
     }

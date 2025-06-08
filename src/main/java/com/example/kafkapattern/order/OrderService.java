@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -66,10 +65,7 @@ public class OrderService {
                 .toList();
 
         // 주문 생성
-        Order order = new Order(1l);
-
-        // order와 orderItems 연관관계 설정
-        orderItems.forEach(order::addItem);
+        Order order = new Order(1l, orderItems);
 
         // 주문 저장
         orderRepository.save(order);
