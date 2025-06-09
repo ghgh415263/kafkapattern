@@ -15,7 +15,7 @@ public class OrderController {
 
     @PostMapping
     public OrderResponse placeOrder(@RequestBody OrderRequest request) {
-        Long id = orderService.placeOrder(request);
+        String id = orderService.placeOrder(request);
         return new OrderResponse(id);
     }
 }

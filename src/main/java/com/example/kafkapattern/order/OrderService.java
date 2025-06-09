@@ -1,8 +1,7 @@
 package com.example.kafkapattern.order;
 
-import com.example.kafkapattern.ObjectSerializer;
 import com.example.kafkapattern.event.OutboxEvent;
-import com.example.kafkapattern.event.OutboxEventRepository;
+import com.example.kafkapattern.event.ResultWithEvent;
 import com.example.kafkapattern.product.Product;
 import com.example.kafkapattern.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +22,10 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
-    private final OutboxEventRepository outboxEventRepository;
-    private final ObjectSerializer objectSerializer;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OrderEventPublisher orderEventPublisher;
 
     @Transactional
-    public Long placeOrder(OrderRequest request) {
+    public String placeOrder(OrderRequest request) {
 
         log.info("현재 쓰레드 이름 in OrderService: " + Thread.currentThread().getName());
 
@@ -65,15 +62,13 @@ public class OrderService {
                 .toList();
 
         // 주문 생성
-        Order order = new Order(1l, orderItems);
+        ResultWithEvent<Order, OrderDomainEvent> orderWithEvent = Order.create(1l, orderItems);
 
         // 주문 저장
-        orderRepository.save(order);
+        orderRepository.save(orderWithEvent.result());
 
-        OutboxEvent outboxEvent = new OutboxEvent("ORDER", order.getId(), "ORDER_PLACED", objectSerializer.serialize(OrderPlacedDto.from(order)));
-        outboxEventRepository.save(outboxEvent);
-        eventPublisher.publishEvent(new OrderPlacedEvent(outboxEvent.getId(), outboxEvent.getAggregateId(), outboxEvent.getPayload()));
+        orderEventPublisher.publishEvent(orderWithEvent.result(), orderWithEvent.event());
 
-        return order.getId();
+        return orderWithEvent.result().getId();
     }
 }

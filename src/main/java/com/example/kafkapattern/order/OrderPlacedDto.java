@@ -3,7 +3,7 @@ package com.example.kafkapattern.order;
 import java.util.List;
 
 public record OrderPlacedDto(
-        Long orderId,
+        String orderId,
         Long userId,
         List<OrderItemDto> items
 ) {

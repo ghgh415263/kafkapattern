@@ -1,5 +1,6 @@
 package com.example.kafkapattern.order;
 
+import com.example.kafkapattern.event.ResultWithEvent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity(name = "ORDERS")
 @Getter
@@ -14,24 +16,37 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;   // UUID 기반 ID (String)
 
     private Long userId;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
     private List<OrderItem> items = new ArrayList<>();
 
-    public Order(Long userId, List<OrderItem> items) {
+    // 생성자 (id 자동 생성)
+    private Order(Long userId, List<OrderItem> items) {
+        this.id = UUID.randomUUID().toString();  // UUID 직접 생성
         this.userId = userId;
         for (OrderItem item : items) {
             addItem(item);
         }
     }
 
-    // 연관관계 편의 메서드
     private void addItem(OrderItem item) {
         items.add(item);
-        item.setOrder(this);
+    }
+
+    // 정적 팩토리 메서드 + 이벤트 생성
+    public static ResultWithEvent<Order, OrderDomainEvent> create(Long userId, List<OrderItem> items) {
+        Order order = new Order(userId, items);
+
+        OrderCreatedEvent event = new OrderCreatedEvent(
+                order.getId(),
+                userId,
+                items
+        );
+
+        return new ResultWithEvent<>(order, event);
     }
 }
