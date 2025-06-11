@@ -1,12 +1,12 @@
 package com.example.kafkapattern.order;
 
-import com.example.kafkapattern.event.OutboxEvent;
 import com.example.kafkapattern.event.ResultWithEvent;
+import com.example.kafkapattern.order.event.OrderCommandPublisher;
+import com.example.kafkapattern.order.event.PaymentProcessCommand;
 import com.example.kafkapattern.product.Product;
 import com.example.kafkapattern.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +23,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final OrderEventPublisher orderEventPublisher;
+    private final OrderCommandPublisher orderCommandPublisher;
 
     @Transactional
     public String placeOrder(OrderRequest request) {
@@ -68,6 +69,9 @@ public class OrderService {
         orderRepository.save(orderWithEvent.result());
 
         orderEventPublisher.publishEvent(orderWithEvent.result(), orderWithEvent.event());
+
+        PaymentProcessCommand paymentCommand = new PaymentProcessCommand(orderWithEvent.result().getId(), orderWithEvent.result().getTotalAmount());
+        orderCommandPublisher.publishPaymentProcessCommand(paymentCommand, orderWithEvent.result().getId());
 
         return orderWithEvent.result().getId();
     }

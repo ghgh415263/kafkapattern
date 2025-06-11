@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,9 +17,15 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    private String id;   // UUID 기반 ID (String)
+    private String id = UUID.randomUUID().toString();   // UUID 기반 ID (String)
 
     private Long userId;
+
+    @Enumerated(EnumType.STRING)
+    private OrderState orderState = OrderState.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    private OrderRejectReason orderRejectReason = null;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
@@ -26,7 +33,6 @@ public class Order {
 
     // 생성자 (id 자동 생성)
     private Order(Long userId, List<OrderItem> items) {
-        this.id = UUID.randomUUID().toString();  // UUID 직접 생성
         this.userId = userId;
         for (OrderItem item : items) {
             addItem(item);
@@ -48,5 +54,11 @@ public class Order {
         );
 
         return new ResultWithEvent<>(order, event);
+    }
+
+    public BigDecimal getTotalAmount() {
+        return this.items.stream()
+                .map(OrderItem::getItemTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

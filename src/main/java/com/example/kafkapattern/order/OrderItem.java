@@ -23,7 +23,7 @@ public class OrderItem {
 
     private BigDecimal price; // 단일 상품 가격 (1개 가격)
 
-    public BigDecimal getItemPrice() {
+    public BigDecimal getItemTotalPrice() {
         return price.multiply(BigDecimal.valueOf(quantity));
     }
 
