@@ -1,6 +1,6 @@
 package com.example.kafkapattern.order;
 
-import com.example.kafkapattern.event.ResultWithEvent;
+import com.example.kafkapattern.common.event.ResultWithEvent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,9 +23,6 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderState orderState = OrderState.PENDING;
-
-    @Enumerated(EnumType.STRING)
-    private OrderRejectReason orderRejectReason = null;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")

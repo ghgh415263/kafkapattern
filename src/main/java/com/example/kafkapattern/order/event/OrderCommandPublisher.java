@@ -1,9 +1,9 @@
 package com.example.kafkapattern.order.event;
 
 import com.example.kafkapattern.ObjectSerializer;
-import com.example.kafkapattern.event.CommandEnvelope;
-import com.example.kafkapattern.event.OutboxEvent;
-import com.example.kafkapattern.event.OutboxEventRepository;
+import com.example.kafkapattern.common.event.CommandEnvelope;
+import com.example.kafkapattern.common.event.OutboxEvent;
+import com.example.kafkapattern.common.event.OutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

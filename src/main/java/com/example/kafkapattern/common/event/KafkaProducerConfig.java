@@ -1,4 +1,4 @@
-package com.example.kafkapattern;
+package com.example.kafkapattern.common.event;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

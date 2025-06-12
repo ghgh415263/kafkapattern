@@ -1,6 +1,6 @@
 package com.example.kafkapattern.order;
 
-import com.example.kafkapattern.event.ResultWithEvent;
+import com.example.kafkapattern.common.event.ResultWithEvent;
 import com.example.kafkapattern.order.event.OrderCommandPublisher;
 import com.example.kafkapattern.order.event.PaymentProcessCommand;
 import com.example.kafkapattern.product.Product;

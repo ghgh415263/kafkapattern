@@ -1,4 +1,4 @@
-package com.example.kafkapattern.event;
+package com.example.kafkapattern.common.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.example.kafkapattern.event;
+package com.example.kafkapattern.common.event;
 
 import com.example.kafkapattern.BaseEntity;
 import jakarta.persistence.*;

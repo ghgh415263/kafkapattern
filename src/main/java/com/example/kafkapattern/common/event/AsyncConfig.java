@@ -1,4 +1,4 @@
-package com.example.kafkapattern.event;
+package com.example.kafkapattern.common.event;
 
 
 import org.springframework.context.annotation.Bean;

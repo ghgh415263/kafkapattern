@@ -1,4 +1,4 @@
-package com.example.kafkapattern.event;
+package com.example.kafkapattern.common.event;
 
 public enum OutboxEventStatus {
     INIT,
