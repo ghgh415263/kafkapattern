@@ -28,22 +28,14 @@ public class SagaStep {
     @Column(name = "status", nullable = false)
     private SagaStepStatus status;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
     public SagaStep(SagaInstance sagaInstance, String stepName) {
         this.sagaInstance = sagaInstance;
         this.stepName = stepName;
         this.status = SagaStepStatus.STARTED;
-        this.createdAt = LocalDateTime.now();
     }
 
     public void setStatus(SagaStepStatus status) {
         this.status = status;
-        this.updatedAt = LocalDateTime.now();
     }
 
     @Override
@@ -65,8 +57,6 @@ public class SagaStep {
                 "id=" + id +
                 ", stepName='" + stepName + '\'' +
                 ", status=" + status +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 
