@@ -1,6 +1,8 @@
 package com.example.kafkapattern.order;
 
 import com.example.kafkapattern.common.event.ResultWithEvent;
+import com.example.kafkapattern.common.saga.SagaManager;
+import com.example.kafkapattern.order.saga.OrderCreateSagaPayload;
 import com.example.kafkapattern.product.Product;
 import com.example.kafkapattern.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final OrderEventPublisher orderEventPublisher;
+    private final SagaManager<OrderCreateSagaPayload> sagaManager;
 
     @Transactional
     public String placeOrder(OrderRequest request) {
@@ -66,6 +70,8 @@ public class OrderService {
         orderRepository.save(orderWithEvent.result());
 
         orderEventPublisher.publishEvent(orderWithEvent.result(), orderWithEvent.event());
+
+        sagaManager.startSaga("OrderCreatedSaga", new OrderCreateSagaPayload(orderWithEvent.result().getId(), 1l, 1l, orderWithEvent.result().getTotalAmount()));
 
         return orderWithEvent.result().getId();
     }

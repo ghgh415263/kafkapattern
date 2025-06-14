@@ -1,7 +1,7 @@
 package com.example.kafkapattern.common.saga;
 
 public enum SagaStepStatus {
-    STARTED,
+    WAITING,
     FAILED,
     SUCCEEDED,
     COMPENSATING,

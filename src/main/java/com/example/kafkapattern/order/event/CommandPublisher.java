@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -25,7 +27,7 @@ public class CommandPublisher {
      * @param command 실제 커맨드 페이로드 객체
      * @param correlationId Saga 추적용 ID
      */
-    public <T> void publish(String topic, String commandType, String targetAggregateId, T command, String correlationId) {
+    public <T> void publish(String topic, String commandType, String targetAggregateId, T command, UUID correlationId) {
         // 커맨드 래핑
         CommandEnvelope<T> envelope = new CommandEnvelope<>(
                 commandType,

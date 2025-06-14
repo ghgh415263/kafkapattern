@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -31,7 +30,7 @@ public class SagaStep {
     public SagaStep(SagaInstance sagaInstance, String stepName) {
         this.sagaInstance = sagaInstance;
         this.stepName = stepName;
-        this.status = SagaStepStatus.STARTED;
+        this.status = SagaStepStatus.WAITING;
     }
 
     public void setStatus(SagaStepStatus status) {

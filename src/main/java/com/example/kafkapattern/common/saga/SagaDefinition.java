@@ -1,12 +1,13 @@
 package com.example.kafkapattern.common.saga;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.List;
+import java.util.UUID;
 
-public interface SagaDefinition {
+public interface SagaDefinition<T> {
     String getType();
     List<String> getSteps();
-    void executeStep(String stepName, JsonNode payload);
-    void compensateStep(String stepName, JsonNode payload);
+    boolean isLastStep(String stepName);
+    String getNextStep(String stepName);
+    StepResult executeStep(String stepName, T payload, UUID correlationId);
+    void compensateStep(String stepName, T payload, UUID correlationId);
 }

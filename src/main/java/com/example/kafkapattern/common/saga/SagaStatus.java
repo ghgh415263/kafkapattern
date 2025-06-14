@@ -3,7 +3,7 @@ package com.example.kafkapattern.common.saga;
 public enum SagaStatus {
     STARTED,
     ABORTING,
-    ABORTED,
+    FAILED,
     COMPLETED;
 
     public boolean isCompleted() {
@@ -11,6 +11,6 @@ public enum SagaStatus {
     }
 
     public boolean isAborted() {
-        return this == ABORTED;
+        return this == FAILED;
     }
 }

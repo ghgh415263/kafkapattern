@@ -35,8 +35,8 @@ public class SagaInstance {
     @Column(name = "current_step")
     private String currentStep;
 
-    @Column(name = "correlation_id", length = 100)
-    private String correlationId;
+    @Column(name = "correlation_id", updatable = false, nullable = false, columnDefinition = "UUID")
+    private UUID correlationId;
 
     @OneToMany(mappedBy = "sagaInstance", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<SagaStep> steps = new ArrayList<>();
@@ -46,7 +46,7 @@ public class SagaInstance {
         this.steps.add(step);
     }
 
-    public SagaInstance(String sagaType, JsonNode payload, String correlationId) {
+    public SagaInstance(String sagaType, JsonNode payload, UUID correlationId) {
         this.id = UUID.randomUUID();
         this.type = sagaType;
         this.payload = payload;
@@ -63,11 +63,17 @@ public class SagaInstance {
     }
 
     public void markFailed() {
-        this.sagaStatus = SagaStatus.ABORTED;
+        this.sagaStatus = SagaStatus.FAILED;
     }
 
-    public void markInProgress() {
-        this.sagaStatus = SagaStatus.STARTED;
+    public void updateStepStatus(String stepName, SagaStepStatus newStatus) {
+        for (SagaStep step : steps) {
+            if (step.getStepName().equals(stepName)) {
+                step.setStatus(newStatus);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Step not found: " + stepName);
     }
 
     @Override

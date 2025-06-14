@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public class OutboxEvent extends BaseEntity {
 
     @Id
-    private String id;
+    private UUID id;
     private String topic; // 예: "ORDER"
     private String eventkey; // "주문id"
     private String eventType; // 예: "ORDER_PLACED"
@@ -32,7 +33,7 @@ public class OutboxEvent extends BaseEntity {
 
     private LocalDateTime sentAt;
 
-    public OutboxEvent(String id, String topic, String eventkey, String eventType, String payload) {
+    public OutboxEvent(UUID id, String topic, String eventkey, String eventType, String payload) {
         this.id = id;
         this.topic = topic;
         this.eventkey = eventkey;
@@ -41,6 +42,9 @@ public class OutboxEvent extends BaseEntity {
     }
 
     public void changeStatus(OutboxEventStatus newStatus) {
+        if (this.status == OutboxEventStatus.SUCCESS || this.status == OutboxEventStatus.FAIL) {
+            throw new IllegalStateException("Cannot change status after final state: " + this.status);
+        }
         this.status = newStatus;
         if (newStatus == OutboxEventStatus.SUCCESS) {
             this.sentAt = LocalDateTime.now();
