@@ -73,6 +73,6 @@ public class OrderService {
 
         sagaManager.startSaga("OrderCreatedSaga", new OrderCreateSagaPayload(orderWithEvent.result().getId(), 1l, 1l, orderWithEvent.result().getTotalAmount()));
 
-        return orderWithEvent.result().getId();
+        return orderWithEvent.result().getId().toString();
     }
 }

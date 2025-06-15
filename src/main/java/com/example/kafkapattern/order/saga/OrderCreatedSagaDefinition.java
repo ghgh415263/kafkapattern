@@ -86,7 +86,7 @@ public class OrderCreatedSagaDefinition implements SagaDefinition<OrderCreateSag
         commandPublisher.publish(
                 "payment-service-command",
                 PaymentProcessCommand.class.getSimpleName(),
-                payload.orderId(),
+                payload.orderId().toString(),
                 command,
                 correlationId
         );

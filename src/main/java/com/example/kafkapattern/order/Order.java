@@ -17,7 +17,8 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    private String id = UUID.randomUUID().toString();   // UUID 기반 ID (String)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     private Long userId;
 
