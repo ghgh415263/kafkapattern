@@ -23,13 +23,12 @@ public class SagaConfiguration {
     public SagaManager<OrderCreateSagaPayload> orderSagaManager(
             SagaDefinitionProvider sagaDefinitionProvider,
             SagaInstanceRepository sagaInstanceRepository,
-            SagaStepRepository sagaStepRepository,
             ObjectMapper objectMapper
     ) {
         return new SagaManager<>(
+                OrderCreateSagaPayload.class,
                 sagaDefinitionProvider,
                 sagaInstanceRepository,
-                sagaStepRepository,
                 objectMapper
         );
     }

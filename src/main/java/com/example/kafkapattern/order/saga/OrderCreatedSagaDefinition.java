@@ -48,6 +48,16 @@ public class OrderCreatedSagaDefinition implements SagaDefinition<OrderCreateSag
     }
 
     @Override
+    public List<String> getPreviousSteps(String stepName) {
+        List<String> steps = getSteps();
+        int index = steps.indexOf(stepName);
+        if (index == -1) {
+            throw new IllegalArgumentException("Step not found: " + stepName);
+        }
+        return steps.subList(0, index);
+    }
+
+    @Override
     public StepResult executeStep(String stepName, OrderCreateSagaPayload payload, UUID correlationId) {
         switch (stepName) {
             case "CreateOrder" -> {
@@ -90,7 +100,7 @@ public class OrderCreatedSagaDefinition implements SagaDefinition<OrderCreateSag
     @Override
     public void compensateStep(String stepName, OrderCreateSagaPayload payload, UUID correlationId) {
         switch (stepName) {
-            case "ApproveOrder" -> compensateApproveOrder(payload, correlationId); // 예외 상황에서 rollback 필요 시
+            case "ApproveOrder" -> {}
             case "ProcessPayment" -> cancelPayment(payload, correlationId);
             case "CreateOrder" -> cancelOrder(payload, correlationId);
             default -> throw new IllegalArgumentException("Unknown compensation step: " + stepName);
@@ -105,10 +115,5 @@ public class OrderCreatedSagaDefinition implements SagaDefinition<OrderCreateSag
     private void cancelOrder(OrderCreateSagaPayload payload, UUID correlationId) {
         // 주문 삭제 또는 상태를 CANCELLED 로 변경
         // 예: orderService.cancel(payload.orderId());
-    }
-
-    private void compensateApproveOrder(OrderCreateSagaPayload payload, UUID correlationId) {
-        // 주문 완료 이후 실패한 경우 처리할 로직 (대부분 발생하지 않거나, 외부 연동 실패 등)
-        // 알림 발송 롤백, 포인트 회수 등
     }
 }

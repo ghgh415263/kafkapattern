@@ -66,6 +66,14 @@ public class SagaInstance {
         this.sagaStatus = SagaStatus.FAILED;
     }
 
+    public boolean isStepSuccessful(String stepName) {
+        return steps.stream()
+                .filter(step -> step.getStepName().equals(stepName))
+                .findFirst()
+                .map(step -> step.getStatus() == SagaStepStatus.SUCCEEDED)
+                .orElse(false);
+    }
+
     public void updateStepStatus(String stepName, SagaStepStatus newStatus) {
         for (SagaStep step : steps) {
             if (step.getStepName().equals(stepName)) {
