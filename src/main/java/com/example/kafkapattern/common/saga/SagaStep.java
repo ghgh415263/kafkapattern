@@ -12,8 +12,11 @@ import java.util.Objects;
 public class SagaStep {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "saga_step_seq_gen")
+    @SequenceGenerator(
+            name = "saga_step_seq_gen",
+            sequenceName = "saga_step_seq"
+    )
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

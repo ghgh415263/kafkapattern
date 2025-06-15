@@ -18,6 +18,7 @@ import java.util.UUID;
 public class SagaInstance {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
@@ -46,8 +47,8 @@ public class SagaInstance {
         this.steps.add(step);
     }
 
+    // 기본 생성자 유지 (필요시)
     public SagaInstance(String sagaType, JsonNode payload, UUID correlationId) {
-        this.id = UUID.randomUUID();
         this.type = sagaType;
         this.payload = payload;
         this.correlationId = correlationId;
